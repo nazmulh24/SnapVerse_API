@@ -1,0 +1,301 @@
+[
+  {
+    "model": "posts.comment",
+    "pk": 2,
+    "fields": {
+      "user": 4,
+      "post": 2,
+      "text": "Great workout motivation! 💪 Keep it up!",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-20T09:15:00Z",
+      "updated_at": "2025-07-20T09:15:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 3,
+    "fields": {
+      "user": 5,
+      "post": 2,
+      "text": "Consistency is indeed key! I tell my clients this all the time.",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-20T10:30:00Z",
+      "updated_at": "2025-07-20T10:30:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 4,
+    "fields": {
+      "user": 3,
+      "post": 2,
+      "text": "Thanks for the support! 🙏",
+      "is_edited": false,
+      "parent_comment": 2,
+      "created_at": "2025-07-20T11:00:00Z",
+      "updated_at": "2025-07-20T11:00:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 5,
+    "fields": {
+      "user": 7,
+      "post": 3,
+      "text": "Love your artistic style! The colors are amazing 🎨",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-19T15:20:00Z",
+      "updated_at": "2025-07-19T15:20:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 6,
+    "fields": {
+      "user": 11,
+      "post": 4,
+      "text": "Early morning workouts are the best! Great energy for the whole day 🌅",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-18T07:30:00Z",
+      "updated_at": "2025-07-18T07:30:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 7,
+    "fields": {
+      "user": 8,
+      "post": 5,
+      "text": "That pasta looks delicious! 🍝 Can you share the recipe?",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-17T20:45:00Z",
+      "updated_at": "2025-07-17T20:45:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 8,
+    "fields": {
+      "user": 6,
+      "post": 5,
+      "text": "Of course! I'll post it on my blog tomorrow 😊",
+      "is_edited": false,
+      "parent_comment": 7,
+      "created_at": "2025-07-17T21:15:00Z",
+      "updated_at": "2025-07-17T21:15:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 9,
+    "fields": {
+      "user": 3,
+      "post": 6,
+      "text": "Awesome project! Just starred it on GitHub ⭐",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-16T23:00:00Z",
+      "updated_at": "2025-07-16T23:00:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 10,
+    "fields": {
+      "user": 12,
+      "post": 7,
+      "text": "Stunning capture! Nature photography at its finest 📸✨",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-15T19:30:00Z",
+      "updated_at": "2025-07-15T19:30:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 11,
+    "fields": {
+      "user": 6,
+      "post": 8,
+      "text": "Digital marketing is so important for small businesses nowadays!",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-14T12:45:00Z",
+      "updated_at": "2025-07-14T12:45:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 12,
+    "fields": {
+      "user": 4,
+      "post": 9,
+      "text": "Just listened to the preview! This beat is fire 🔥🎵",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-13T21:00:00Z",
+      "updated_at": "2025-07-13T21:00:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 13,
+    "fields": {
+      "user": 10,
+      "post": 9,
+      "text": "Thank you! Means a lot coming from a fellow artist 🙏",
+      "is_edited": false,
+      "parent_comment": 12,
+      "created_at": "2025-07-13T21:30:00Z",
+      "updated_at": "2025-07-13T21:30:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 14,
+    "fields": {
+      "user": 9,
+      "post": 10,
+      "text": "Beach yoga sounds so peaceful! Need to try this 🧘‍♀️🌊",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-12T08:15:00Z",
+      "updated_at": "2025-07-12T08:15:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 15,
+    "fields": {
+      "user": 7,
+      "post": 11,
+      "text": "Important research! Climate data is crucial for our future 🌍",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-11T14:30:00Z",
+      "updated_at": "2025-07-11T14:30:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 16,
+    "fields": {
+      "user": 5,
+      "post": 12,
+      "text": "Weekend coding sessions are the best! What project are you working on?",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-10T10:00:00Z",
+      "updated_at": "2025-07-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 17,
+    "fields": {
+      "user": 8,
+      "post": 13,
+      "text": "Congratulations on the exhibition! Your art deserves to be seen 🎨👏",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-09T17:15:00Z",
+      "updated_at": "2025-07-09T17:15:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 18,
+    "fields": {
+      "user": 11,
+      "post": 14,
+      "text": "Local and fresh is always the way to go! 🥕🍅",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-08T11:30:00Z",
+      "updated_at": "2025-07-08T11:30:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 19,
+    "fields": {
+      "user": 3,
+      "post": 15,
+      "text": "Teaching photography sounds amazing! Great way to share knowledge 📷",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-07T20:30:00Z",
+      "updated_at": "2025-07-07T20:30:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 20,
+    "fields": {
+      "user": 4,
+      "post": 16,
+      "text": "2 AM debugging is a rite of passage for developers 😂💻",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-06T03:00:00Z",
+      "updated_at": "2025-07-06T03:00:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 21,
+    "fields": {
+      "user": 12,
+      "post": 17,
+      "text": "Digital detox is so important for mental health! Enjoy the retreat 🧘‍♂️",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-05T16:00:00Z",
+      "updated_at": "2025-07-05T16:00:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 22,
+    "fields": {
+      "user": 9,
+      "post": 18,
+      "text": "Collaborations always produce the best music! Can't wait to hear it 🎤",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-04T18:15:00Z",
+      "updated_at": "2025-07-04T18:15:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 23,
+    "fields": {
+      "user": 7,
+      "post": 19,
+      "text": "300% engagement increase is incredible! Great work 📊🚀",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-03T15:30:00Z",
+      "updated_at": "2025-07-03T15:30:00Z"
+    }
+  },
+  {
+    "model": "posts.comment",
+    "pk": 24,
+    "fields": {
+      "user": 11,
+      "post": 20,
+      "text": "Congratulations on the publication! Three years of hard work paying off 🎉📝",
+      "is_edited": false,
+      "parent_comment": null,
+      "created_at": "2025-07-02T13:15:00Z",
+      "updated_at": "2025-07-02T13:15:00Z"
+    }
+  }
+]

@@ -1,0 +1,230 @@
+[
+  {
+    "model": "posts.post",
+    "pk": 2,
+    "fields": {
+      "user": 3,
+      "caption": "Just finished an amazing workout session! 💪 Feeling stronger every day. Remember, consistency is key to achieving your fitness goals. #FitnessMotivation #GymLife",
+      "location": "Gold's Gym, NYC",
+      "privacy": "public",
+      "created_at": "2025-07-20T08:30:00Z",
+      "updated_at": "2025-07-20T08:30:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 3,
+    "fields": {
+      "user": 4,
+      "caption": "Working on a new painting today 🎨 The colors are coming together beautifully. Art is my way of expressing emotions that words can't capture. #ArtLife #Painting",
+      "location": "Home Studio, LA",
+      "privacy": "followers",
+      "created_at": "2025-07-19T14:15:00Z",
+      "updated_at": "2025-07-19T14:15:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 4,
+    "fields": {
+      "user": 5,
+      "caption": "Early morning training session with my clients! There's nothing better than seeing people achieve their health goals. Every small step counts! 🏃‍♂️",
+      "location": "Chicago Fitness Center",
+      "privacy": "public",
+      "created_at": "2025-07-18T06:45:00Z",
+      "updated_at": "2025-07-18T06:45:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 5,
+    "fields": {
+      "user": 6,
+      "caption": "Tried this amazing new recipe today! 🍝 Homemade pasta with fresh basil and tomatoes from my garden. Cooking is pure therapy for the soul. Recipe coming soon!",
+      "location": "Austin, TX",
+      "privacy": "public",
+      "created_at": "2025-07-17T19:20:00Z",
+      "updated_at": "2025-07-17T19:20:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 6,
+    "fields": {
+      "user": 7,
+      "caption": "Just pushed a new open source project to GitHub! 🚀 Working on a React component library. Love contributing to the developer community. #OpenSource #React",
+      "location": "Seattle, WA",
+      "privacy": "public",
+      "created_at": "2025-07-16T22:10:00Z",
+      "updated_at": "2025-07-16T22:10:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 7,
+    "fields": {
+      "user": 8,
+      "caption": "Golden hour photography session at the mountains 📸✨ The light was absolutely perfect today. Nature never fails to inspire me with its beauty.",
+      "location": "Rocky Mountains, CO",
+      "privacy": "public",
+      "created_at": "2025-07-15T18:45:00Z",
+      "updated_at": "2025-07-15T18:45:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 8,
+    "fields": {
+      "user": 9,
+      "caption": "Running a digital marketing campaign for a local startup. Love helping small businesses grow their online presence! 📱💼 #DigitalMarketing #Startup",
+      "location": "Portland, OR",
+      "privacy": "followers",
+      "created_at": "2025-07-14T11:30:00Z",
+      "updated_at": "2025-07-14T11:30:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 9,
+    "fields": {
+      "user": 10,
+      "caption": "New beat drop! 🎵🔥 Been working on this track for weeks. Music production is my passion and my escape. Link in bio for the full version! #MusicProducer #NewMusic",
+      "location": "Nashville, TN",
+      "privacy": "public",
+      "created_at": "2025-07-13T20:15:00Z",
+      "updated_at": "2025-07-13T20:15:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 10,
+    "fields": {
+      "user": 11,
+      "caption": "Morning yoga session by the beach 🧘‍♂️🌊 Starting the day with gratitude and mindfulness. Peace begins within us. #Yoga #Mindfulness #BeachLife",
+      "location": "San Diego Beach, CA",
+      "privacy": "public",
+      "created_at": "2025-07-12T07:00:00Z",
+      "updated_at": "2025-07-12T07:00:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 11,
+    "fields": {
+      "user": 12,
+      "caption": "Climate research fieldwork today 🌍📊 Collecting data on coastal erosion. Every data point helps us understand our changing planet better. #ClimateScience #Research",
+      "location": "Berkeley Coast, CA",
+      "privacy": "public",
+      "created_at": "2025-07-11T13:45:00Z",
+      "updated_at": "2025-07-11T13:45:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 12,
+    "fields": {
+      "user": 3,
+      "caption": "Sunday morning coffee and coding ☕💻 Working on a personal project that I'm excited to share soon. There's something magical about quiet weekend coding sessions.",
+      "location": "Home Office, NYC",
+      "privacy": "public",
+      "created_at": "2025-07-10T09:15:00Z",
+      "updated_at": "2025-07-10T09:15:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 13,
+    "fields": {
+      "user": 4,
+      "caption": "Art exhibition opening tonight! 🎨🖼️ So nervous but excited to share my latest collection with everyone. Art is meant to be shared and felt by others.",
+      "location": "Downtown Gallery, LA",
+      "privacy": "followers",
+      "created_at": "2025-07-09T16:30:00Z",
+      "updated_at": "2025-07-09T16:30:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 14,
+    "fields": {
+      "user": 6,
+      "caption": "Farmers market haul! 🥕🍅 Nothing beats fresh, local ingredients for cooking. Supporting local farmers and eating healthy - it's a win-win! #FarmersMarket #LocalFood",
+      "location": "Austin Farmers Market, TX",
+      "privacy": "public",
+      "created_at": "2025-07-08T10:20:00Z",
+      "updated_at": "2025-07-08T10:20:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 15,
+    "fields": {
+      "user": 8,
+      "caption": "Sunset photography workshop with aspiring photographers 📷🌅 Love sharing knowledge and watching others discover their creative vision. Teaching is learning twice.",
+      "location": "Denver Hills, CO",
+      "privacy": "public",
+      "created_at": "2025-07-07T19:45:00Z",
+      "updated_at": "2025-07-07T19:45:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 16,
+    "fields": {
+      "user": 7,
+      "caption": "Late night debugging session 🐛💻 Finally found that elusive bug that's been haunting me for days! Sometimes the best solutions come at 2 AM. #DeveloperLife #Debugging",
+      "location": "Home Office, Seattle",
+      "privacy": "public",
+      "created_at": "2025-07-06T02:15:00Z",
+      "updated_at": "2025-07-06T02:15:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 17,
+    "fields": {
+      "user": 11,
+      "caption": "Meditation retreat this weekend 🧘‍♂️✨ Disconnecting from the digital world to reconnect with inner peace. Sometimes we need to pause to truly live.",
+      "location": "Mountain Retreat Center, CA",
+      "privacy": "public",
+      "created_at": "2025-07-05T15:00:00Z",
+      "updated_at": "2025-07-05T15:00:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 18,
+    "fields": {
+      "user": 10,
+      "caption": "Studio session with an amazing vocalist today! 🎤🎵 The magic happens when talented artists collaborate. Can't wait to share this track with the world! #Collaboration #Studio",
+      "location": "Music Row Studio, Nashville",
+      "privacy": "public",
+      "created_at": "2025-07-04T17:30:00Z",
+      "updated_at": "2025-07-04T17:30:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 19,
+    "fields": {
+      "user": 9,
+      "caption": "Client presentation went amazing today! 📊✨ Helped them increase their social media engagement by 300%. Love seeing businesses thrive with the right strategy! #MarketingSuccess",
+      "location": "Client Office, Portland",
+      "privacy": "followers",
+      "created_at": "2025-07-03T14:45:00Z",
+      "updated_at": "2025-07-03T14:45:00Z"
+    }
+  },
+  {
+    "model": "posts.post",
+    "pk": 20,
+    "fields": {
+      "user": 12,
+      "caption": "Research paper published! 📝🌍 Three years of work on ocean temperature patterns finally in print. Science is a marathon, not a sprint. #ClimateResearch #Published",
+      "location": "UC Berkeley, CA",
+      "privacy": "public",
+      "created_at": "2025-07-02T12:00:00Z",
+      "updated_at": "2025-07-02T12:00:00Z"
+    }
+  }
+]
