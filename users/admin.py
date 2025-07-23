@@ -12,8 +12,15 @@ class CustomUserAdmin(UserAdmin):
 
     model = User
 
-    list_display = ("email", "username", "get_full_name", "is_active", "is_staff")
-    list_filter = ("is_staff", "is_active", "is_superuser")
+    list_display = (
+        "email",
+        "username",
+        "get_full_name",
+        "privacy_status",
+        "is_active",
+        "is_staff",
+    )
+    list_filter = ("is_staff", "is_active", "is_superuser", "is_private")
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
@@ -75,6 +82,7 @@ class CustomUserAdmin(UserAdmin):
                     "username",
                     "first_name",
                     "last_name",
+                    "is_private",
                     "password1",
                     "password2",
                     "is_staff",
@@ -93,6 +101,16 @@ class CustomUserAdmin(UserAdmin):
         return f"{obj.first_name} {obj.last_name}".strip()
 
     get_full_name.short_description = "Full Name"
+
+    def privacy_status(self, obj):
+        """Display privacy status with icons"""
+        if obj.is_private:
+            return format_html('<span style="color: #e74c3c;">🔒 Private</span>')
+        else:
+            return format_html('<span style="color: #27ae60;">🌍 Public</span>')
+
+    privacy_status.short_description = "Privacy"
+    privacy_status.admin_order_field = "is_private"
 
     def profile_image_tag(self, obj):
         """Display profile picture thumbnail in admin"""
