@@ -32,11 +32,11 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         if self.action in ["approve_request", "reject_request"]:
             permission_classes = [
                 IsAuthenticated
-            ]  # Only request recipient can approve/reject
+            ]  # --> Only request recipient can approve/reject
         elif self.action in ["follow_user", "unfollow_user"]:
             permission_classes = [
                 IsAuthenticated
-            ]  # Only authenticated users can follow
+            ]  # --> Only authenticated users can follow
         else:
             permission_classes = [IsAuthenticated]
 
@@ -124,12 +124,10 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         # --> Prepare response data with clear user ID and pending status
         response_data = {
             "success": True,
-            "user_id": user_to_follow.id,
             "user": {
                 "id": user_to_follow.id,
                 "username": user_to_follow.username,
-                "first_name": user_to_follow.first_name,
-                "last_name": user_to_follow.last_name,
+                "full_name": user_to_follow.get_full_name(),
                 "is_private": user_to_follow.is_private,
             },
             "follow_id": follow.id,
@@ -227,7 +225,7 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         """Get pending follow requests or handle approve/reject actions"""
 
         if request.method == "POST":
-            # -->Handle POST request for approve/reject
+            # --> Handle POST request for approve/reject
             serializer = PendingRequestActionSerializer(data=request.data)
             if not serializer.is_valid():
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -276,4 +274,3 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
                 pending, many=True, context={"request": request}
             )
             return Response(serializer.data)
-
