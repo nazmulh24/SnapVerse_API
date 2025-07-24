@@ -23,6 +23,7 @@ class Post(models.Model):
     )
     # video = models.FileField(upload_to="posts/videos/", blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
+    is_edited = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -44,6 +45,14 @@ class Post(models.Model):
         if self.caption:
             return self.caption[:50] + "..." if len(self.caption) > 50 else self.caption
         return f"Post by {self.user.username}"
+
+    def save(self, *args, **kwargs):
+        # --> Mark as edited if caption is being updated (not on creation)
+        if self.pk and self.caption:
+            original = Post.objects.get(pk=self.pk)
+            if original.caption != self.caption:
+                self.is_edited = True
+        super().save(*args, **kwargs)
 
 
 class Reaction(models.Model):

@@ -11,7 +11,13 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ["caption", "image", "video", "location", "privacy"]
+        fields = [
+            "caption",
+            "image",
+            # "video",
+            "location",
+            "privacy",
+        ]
 
     def create(self, validated_data):
         validated_data["user"] = self.context["request"].user
@@ -25,9 +31,8 @@ class PostDetailSerializer(serializers.ModelSerializer):
     user_profile_picture = serializers.ImageField(
         source="user.profile_picture", read_only=True
     )
-    likes_count = serializers.SerializerMethodField()
+    reactions_count = serializers.SerializerMethodField()
     comments_count = serializers.SerializerMethodField()
-    is_liked = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -37,75 +42,23 @@ class PostDetailSerializer(serializers.ModelSerializer):
             "user_profile_picture",
             "caption",
             "image",
-            "video",
+            # "video",
             "location",
             "privacy",
+            "is_edited",
             "created_at",
             "updated_at",
-            "likes_count",
+            "reactions_count",
             "comments_count",
-            "is_liked",
         ]
 
-    def get_likes_count(self, obj):
-        """Get total likes count for this post"""
-        return obj.reactions.filter(reaction="like").count()
+    def get_reactions_count(self, obj):
+        """Get total reactions count for this post"""
+        return obj.reactions.count()
 
     def get_comments_count(self, obj):
         """Get total comments count for this post"""
         return obj.comments.count()
-
-    def get_is_liked(self, obj):
-        """Check if current user liked this post"""
-        request = self.context.get("request")
-        if request and request.user.is_authenticated:
-            return obj.reactions.filter(user=request.user, reaction="like").exists()
-        return False
-
-
-class PostListSerializer(serializers.ModelSerializer):
-    """Serializer for listing posts with minimal data"""
-
-    user = serializers.CharField(source="user.username", read_only=True)
-    user_profile_picture = serializers.ImageField(
-        source="user.profile_picture", read_only=True
-    )
-    likes_count = serializers.SerializerMethodField()
-    comments_count = serializers.SerializerMethodField()
-    is_liked = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Post
-        fields = [
-            "id",
-            "user",
-            "user_profile_picture",
-            "caption",
-            "image",
-            "video",
-            "location",
-            "privacy",
-            "created_at",
-            "updated_at",
-            "likes_count",
-            "comments_count",
-            "is_liked",
-        ]
-
-    def get_likes_count(self, obj):
-        """Get total likes count for this post"""
-        return obj.reactions.filter(reaction="like").count()
-
-    def get_comments_count(self, obj):
-        """Get total comments count for this post"""
-        return obj.comments.count()
-
-    def get_is_liked(self, obj):
-        """Check if current user liked this post"""
-        request = self.context.get("request")
-        if request and request.user.is_authenticated:
-            return obj.reactions.filter(user=request.user, reaction="like").exists()
-        return False
 
 
 class PostUpdateSerializer(serializers.ModelSerializer):
@@ -190,7 +143,7 @@ class CommentWithPostSerializer(serializers.ModelSerializer):
                 else obj.post.caption
             ),
             "image": obj.post.image.url if obj.post.image else None,
-            "video": obj.post.video.url if obj.post.video else None,
+            # "video": obj.post.video.url if obj.post.video else None,
             "created_at": obj.post.created_at,
             "privacy": obj.post.privacy,
         }
@@ -277,3 +230,5 @@ class ReactionCreateSerializer(serializers.Serializer):
                 f"Invalid reaction. Choose from: {valid_choices}"
             )
         return value
+
+

@@ -16,7 +16,6 @@ from api.permissions import (
 from .serializers import (
     PostCreateSerializer,
     PostDetailSerializer,
-    PostListSerializer,
     PostUpdateSerializer,
     CommentSerializer,
     CommentWithPostSerializer,
@@ -65,7 +64,7 @@ class PostViewSet(viewsets.ModelViewSet):
             return ReactionCreateSerializer
         elif self.action == "comments":
             return CommentCreateSerializer
-        return PostListSerializer
+        return PostDetailSerializer
 
     def get_queryset(self):
         """Filter posts based on privacy settings and user permissions"""
@@ -238,7 +237,7 @@ class PostViewSet(viewsets.ModelViewSet):
             .order_by("-created_at")
         )
         page = self.paginate_queryset(posts)
-        serializer = PostListSerializer(page, many=True, context={"request": request})
+        serializer = PostDetailSerializer(page, many=True, context={"request": request})
         return self.get_paginated_response(serializer.data)
 
     @action(detail=False, methods=["get"])
@@ -256,7 +255,7 @@ class PostViewSet(viewsets.ModelViewSet):
             .order_by("-created_at")
         )
         page = self.paginate_queryset(posts)
-        serializer = PostListSerializer(page, many=True, context={"request": request})
+        serializer = PostDetailSerializer(page, many=True, context={"request": request})
         return self.get_paginated_response(serializer.data)
 
 
