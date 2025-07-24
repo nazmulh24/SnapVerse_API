@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from django.contrib.auth import get_user_model
 from relationships.models import Follow
 
@@ -65,10 +66,7 @@ class FollowStatsSerializer(serializers.Serializer):
 class PendingRequestActionSerializer(serializers.Serializer):
     """Serializer for handling pending requests with approve/reject choice"""
 
-    CHOICE_OPTIONS = [
-        ("Approve", "Approve"),
-        ("Reject", "Reject"),
-    ]
+    CHOICE_OPTIONS = [("Approve", "Approve"), ("Reject", "Reject")]
 
     id = serializers.IntegerField(min_value=1, help_text="ID of the follow request")
     action = serializers.ChoiceField(

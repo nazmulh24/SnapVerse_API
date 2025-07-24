@@ -186,3 +186,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
             return follow.is_approved
         except:
             return False
+

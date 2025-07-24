@@ -2,13 +2,11 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from django.shortcuts import get_object_or_404
-from django.db.models import Q, Count
 from django.contrib.auth import get_user_model
 
 from api.paginations import FollowPagination
-from .models import Follow
-from .serializers import (
+from relationships.models import Follow
+from relationships.serializers import (
     FollowSerializer,
     FollowActionRequestSerializer,
     FollowStatsSerializer,
@@ -74,7 +72,6 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
                 following=user, is_approved=False
             ).select_related("follower", "following")
 
-        # Only return empty queryset for `/follows/`
         return Follow.objects.none()
 
     def list(self, request):
@@ -124,7 +121,7 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
             follower=request.user, following=user_to_follow
         )
 
-        # Prepare response data with clear user ID and pending status
+        # --> Prepare response data with clear user ID and pending status
         response_data = {
             "success": True,
             "user_id": user_to_follow.id,
@@ -202,7 +199,7 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         """Get list of users that the current user is following"""
         following = self.get_queryset()
 
-        # Apply pagination
+        # --> Apply pagination
         page = self.paginate_queryset(following)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -216,7 +213,7 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         """Get list of users following the current user"""
         followers = self.get_queryset()
 
-        # Apply pagination
+        # --> Apply pagination
         page = self.paginate_queryset(followers)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -230,7 +227,7 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         """Get pending follow requests or handle approve/reject actions"""
 
         if request.method == "POST":
-            # Handle POST request for approve/reject
+            # -->Handle POST request for approve/reject
             serializer = PendingRequestActionSerializer(data=request.data)
             if not serializer.is_valid():
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -238,7 +235,7 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
             request_id = serializer.validated_data["id"]
             action = serializer.validated_data["action"]
 
-            # Get the follow request
+            # --> Get the follow request
             try:
                 follow = Follow.objects.get(
                     pk=request_id, following=request.user, is_approved=False
@@ -249,14 +246,14 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
-            # Perform the action
+            # --> Perform the action
             if action == "Approve":
                 follow.approve()
                 return Response(
                     {"message": "Follow request approved successfully"},
                     status=status.HTTP_200_OK,
                 )
-            else:  # Reject
+            else:
                 follow.delete()
                 return Response(
                     {"message": "Follow request rejected successfully"},
@@ -264,10 +261,10 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
                 )
 
         else:
-            # Handle GET request - original functionality
+            # --> Handle GET request - original functionality
             pending = self.get_queryset()
 
-            # Apply pagination
+            # --> Apply pagination
             page = self.paginate_queryset(pending)
             if page is not None:
                 serializer = self.get_serializer(
@@ -279,3 +276,4 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
                 pending, many=True, context={"request": request}
             )
             return Response(serializer.data)
+
