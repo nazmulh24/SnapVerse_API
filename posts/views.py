@@ -6,6 +6,8 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 
+from drf_yasg.utils import swagger_auto_schema
+
 from api.paginations import PostPagination, CommentPagination
 from posts.models import Post, Comment, Reaction
 from api.permissions import (
@@ -28,9 +30,7 @@ from .serializers import (
 
 
 class PostViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for handling post operations
-    """
+    """Post management endpoints for social media content."""
 
     queryset = Post.objects.all()
     permission_classes = [IsAuthenticated]
@@ -40,6 +40,7 @@ class PostViewSet(viewsets.ModelViewSet):
     search_fields = ["caption", "location", "user__username"]
     ordering_fields = ["created_at", "updated_at"]
     ordering = ["-created_at"]
+    http_method_names = ["get", "post", "put", "delete"]
 
     def get_permissions(self):
         """
@@ -89,6 +90,20 @@ class PostViewSet(viewsets.ModelViewSet):
             "reactions", "comments"
         )
 
+    @swagger_auto_schema(
+        operation_summary="List Posts",
+        operation_description="Get posts with privacy-based filtering and pagination",
+        tags=["Posts"],
+    )
+    def list(self, request, *args, **kwargs):
+        """Get personalized social media feed with privacy-based filtering"""
+        return super().list(request, *args, **kwargs)
+
+    @swagger_auto_schema(operation_summary="Update Post", tags=["Posts"])
+    def update(self, request, *args, **kwargs):
+        """Update a post"""
+        return super().update(request, *args, **kwargs)
+
     def perform_create(self, serializer):
         """Set the user when creating a post"""
         serializer.save(user=self.request.user)
@@ -101,6 +116,16 @@ class PostViewSet(viewsets.ModelViewSet):
         """Delete the post (permission already checked)"""
         instance.delete()
 
+    @swagger_auto_schema(
+        methods=["post"],
+        operation_summary="Add Reaction",
+        tags=["Posts"],
+    )
+    @swagger_auto_schema(
+        methods=["delete"],
+        operation_summary="Remove Reaction",
+        tags=["Posts"],
+    )
     @action(detail=True, methods=["post", "delete"])
     def react(self, request, pk=None):
         """Handle post reactions - add, update, or remove"""
@@ -170,6 +195,10 @@ class PostViewSet(viewsets.ModelViewSet):
                     status=status.HTTP_404_NOT_FOUND,
                 )
 
+    @swagger_auto_schema(
+        operation_summary="Get Post Reactions",
+        tags=["Posts"],
+    )
     @action(detail=True, methods=["get"])
     def reactions(self, request, pk=None):
         """Get all reactions for a post"""
@@ -184,6 +213,12 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = ReactionSerializer(reactions, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        methods=["get"], operation_summary="Get Comments", tags=["Posts"]
+    )
+    @swagger_auto_schema(
+        methods=["post"], operation_summary="Add Comment", tags=["Posts"]
+    )
     @action(detail=True, methods=["get", "post"])
     def comments(self, request, pk=None):
         """Get comments for a post or add a new comment"""
@@ -227,6 +262,10 @@ class PostViewSet(viewsets.ModelViewSet):
                 )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(
+        operation_summary="My Posts",
+        tags=["Posts"],
+    )
     @action(detail=False, methods=["get"])
     def my_posts(self, request):
         """Get current user's posts with pagination"""
@@ -240,6 +279,10 @@ class PostViewSet(viewsets.ModelViewSet):
         serializer = PostDetailSerializer(page, many=True, context={"request": request})
         return self.get_paginated_response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_summary="User Feed",
+        tags=["Posts"],
+    )
     @action(detail=False, methods=["get"])
     def feed(self, request):
         """Get personalized feed for the user with pagination"""
@@ -260,9 +303,7 @@ class PostViewSet(viewsets.ModelViewSet):
 
 
 class CommentViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for handling comment operations
-    """
+    """Comment management endpoints for post interactions."""
 
     queryset = (
         Comment.objects.all()
@@ -271,7 +312,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     )
     permission_classes = [IsAuthenticated]
     pagination_class = CommentPagination
-    http_method_names = ["get", "patch", "delete"]
+    http_method_names = ["get", "put", "delete"]
 
     def get_permissions(self):
         """
@@ -294,6 +335,11 @@ class CommentViewSet(viewsets.ModelViewSet):
             return CommentWithPostSerializer
         return CommentSerializer
 
+    @swagger_auto_schema(operation_summary="Update Comment", tags=["Comments"])
+    def update(self, request, *args, **kwargs):
+        """Update a comment"""
+        return super().update(request, *args, **kwargs)
+
     def perform_update(self, serializer):
         """Update the comment (permission already checked)"""
         serializer.save()
@@ -302,6 +348,16 @@ class CommentViewSet(viewsets.ModelViewSet):
         """Delete the comment (permission already checked)"""
         instance.delete()
 
+    @swagger_auto_schema(
+        methods=["get"],
+        operation_summary="Get Replies",
+        tags=["Comments"],
+    )
+    @swagger_auto_schema(
+        methods=["post"],
+        operation_summary="Add Reply",
+        tags=["Comments"],
+    )
     @action(detail=True, methods=["get", "post"])
     def replies(self, request, pk=None):
         """Get replies for a comment or add a new reply"""
