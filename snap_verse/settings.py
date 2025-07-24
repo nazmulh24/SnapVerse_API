@@ -31,10 +31,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     #
+    "drf_yasg",
+    "django_filters",
     "rest_framework",
     "djoser",
     "debug_toolbar",
-    "django_filters",
     #
     "api",
     "users",
@@ -162,6 +163,16 @@ DJOSER = {
     },
 }
 
+SWAGGER_SETTINGS = {
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT Authorization header using the Bearer scheme. Example: `JWT <your_token>`",
+        },
+    }
+}
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = config("EMAIL_HOST")

@@ -35,7 +35,7 @@ class UserSerializer(BaseUserSerializer):
     posts_count = serializers.SerializerMethodField(method_name="get_posts_count")
 
     class Meta(BaseUserSerializer.Meta):
-        # ref_name = "CustomUser"
+        ref_name = "CustomUser"
         fields = (
             "id",
             "username",
