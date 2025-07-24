@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 from users.managers import CustomUserManager
+from api.validators import validate_file_size, validate_image_format
 
 
 class User(AbstractUser):
@@ -21,10 +22,16 @@ class User(AbstractUser):
 
     email = models.EmailField(unique=True)
     profile_picture = models.ImageField(
-        upload_to="users/profile_pictures/", blank=True, null=True
+        upload_to="users/profile_pictures/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size, validate_image_format],
     )
     cover_photo = models.ImageField(
-        upload_to="users/cover_photos/", blank=True, null=True
+        upload_to="users/cover_photos/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size, validate_image_format],
     )
     bio = models.TextField(max_length=200, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
@@ -58,7 +65,6 @@ class User(AbstractUser):
     )
 
     updated_at = models.DateTimeField(auto_now=True)
-
     is_private = models.BooleanField(default=False)
 
     USERNAME_FIELD = "email"  # ---> Use email instead of username
@@ -76,4 +82,3 @@ class User(AbstractUser):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
-

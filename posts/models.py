@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+from api.validators import validate_file_size, validate_image_format
+
 
 class Post(models.Model):
     """
@@ -13,8 +15,13 @@ class Post(models.Model):
         related_name="posts",
     )
     caption = models.TextField(max_length=2200, blank=True, null=True)
-    image = models.ImageField(upload_to="posts/images/", blank=True, null=True)
-    video = models.FileField(upload_to="posts/videos/", blank=True, null=True)
+    image = models.ImageField(
+        upload_to="posts/images/",
+        blank=True,
+        null=True,
+        validators=[validate_file_size, validate_image_format],
+    )
+    # video = models.FileField(upload_to="posts/videos/", blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -125,4 +132,3 @@ class Comment(models.Model):
             if original.text != self.text:
                 self.is_edited = True
         super().save(*args, **kwargs)
-
