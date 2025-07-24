@@ -4,6 +4,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth import get_user_model
 
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 from api.paginations import FollowPagination
 from relationships.models import Follow
 from relationships.serializers import (
@@ -18,7 +21,10 @@ User = get_user_model()
 
 class FollowViewSet(viewsets.ReadOnlyModelViewSet):
     """
-    ViewSet for handling follow/unfollow operations
+    Social connections and follow system management.
+
+    Handles following/unfollowing users, managing follow requests,
+    and retrieving social connection data with privacy controls.
     """
 
     queryset = Follow.objects.all()
@@ -74,6 +80,12 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
 
         return Follow.objects.none()
 
+    @swagger_auto_schema(
+        operation_summary="Get Follow Statistics",
+        operation_description="Retrieve current user's follow statistics",
+        responses={200: FollowStatsSerializer},
+        tags=["Relationships"],
+    )
     def list(self, request):
         """Get follow statistics for the current user"""
         user = request.user
@@ -95,9 +107,16 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(stats_data)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_summary="Follow User",
+        operation_description="Follow a user or send follow request for private accounts",
+        request_body=FollowActionRequestSerializer,
+        responses={201: "Follow successful", 400: "Bad request", 404: "User not found"},
+        tags=["Relationships"],
+    )
     @action(detail=False, methods=["post"])
     def follow_user(self, request):
-        """Follow a user"""
+        """Follow a user - instantly for public users, request for private users"""
         serializer = self.get_serializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -151,6 +170,17 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
             )
             return Response(response_data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        operation_summary="Unfollow User",
+        operation_description="Remove follow relationship with a user",
+        request_body=FollowActionRequestSerializer,
+        responses={
+            200: "Unfollow successful",
+            400: "Bad request",
+            404: "User not found",
+        },
+        tags=["Relationships"],
+    )
     @action(detail=False, methods=["post"])
     def unfollow_user(self, request):
         """Unfollow a user"""
@@ -192,6 +222,20 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+    @swagger_auto_schema(
+        operation_summary="Get Following List",
+        operation_description="Retrieve list of users the current user is following",
+        manual_parameters=[
+            openapi.Parameter(
+                "page",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Page number",
+            ),
+        ],
+        responses={200: FollowSerializer(many=True)},
+        tags=["Relationships"],
+    )
     @action(detail=False, methods=["get"])
     def following(self, request):
         """Get list of users that the current user is following"""
@@ -206,6 +250,20 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(following, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        operation_summary="Get Followers List",
+        operation_description="Retrieve list of users following the current user",
+        manual_parameters=[
+            openapi.Parameter(
+                "page",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Page number",
+            ),
+        ],
+        responses={200: FollowSerializer(many=True)},
+        tags=["Relationships"],
+    )
     @action(detail=False, methods=["get"])
     def followers(self, request):
         """Get list of users following the current user"""
@@ -220,6 +278,33 @@ class FollowViewSet(viewsets.ReadOnlyModelViewSet):
         serializer = self.get_serializer(followers, many=True)
         return Response(serializer.data)
 
+    @swagger_auto_schema(
+        methods=["get"],
+        operation_summary="Get Pending Requests",
+        operation_description="Retrieve pending follow requests",
+        manual_parameters=[
+            openapi.Parameter(
+                "page",
+                openapi.IN_QUERY,
+                type=openapi.TYPE_INTEGER,
+                description="Page number",
+            ),
+        ],
+        responses={200: FollowSerializer(many=True)},
+        tags=["Relationships"],
+    )
+    @swagger_auto_schema(
+        methods=["post"],
+        operation_summary="Handle Follow Request",
+        operation_description="Approve or reject a follow request",
+        request_body=PendingRequestActionSerializer,
+        responses={
+            200: "Request handled",
+            400: "Bad request",
+            404: "Request not found",
+        },
+        tags=["Relationships"],
+    )
     @action(detail=False, methods=["get", "post"])
     def pending_requests(self, request):
         """Get pending follow requests or handle approve/reject actions"""
