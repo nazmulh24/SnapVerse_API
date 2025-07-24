@@ -4,8 +4,13 @@ from .models import Post, Reaction, Comment
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ("user", "caption_preview", "privacy")
-    list_filter = ("privacy", "created_at")
+    list_display = (
+        "user",
+        "caption_preview",
+        "is_edited",
+        "privacy",
+    )
+    list_filter = ("privacy", "created_at", "is_edited")
     search_fields = ("caption", "user__username", "user__email")
     ordering = ("-created_at",)
 
