@@ -4,12 +4,11 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from django.shortcuts import get_object_or_404
-from django.db.models import Q, Count
+from django.db.models import Q
 
 from api.paginations import PostPagination, CommentPagination
-from .models import Post, Comment, Reaction
-from .permissions import (
+from posts.models import Post, Comment, Reaction
+from api.permissions import (
     IsOwnerOrReadOnly,
     IsCommentOwnerOrReadOnly,
     IsCommentOwnerPostOwnerOrAdmin,
@@ -22,8 +21,7 @@ from .serializers import (
     CommentSerializer,
     CommentWithPostSerializer,
     CommentCreateSerializer,
-    CommentReplyCreateSerializer,
-    CommentUpdateSerializer,
+    CommentTextSerializer,
     CommentReplySerializer,
     ReactionSerializer,
     ReactionCreateSerializer,
@@ -274,17 +272,15 @@ class CommentViewSet(viewsets.ModelViewSet):
     )
     permission_classes = [IsAuthenticated]
     pagination_class = CommentPagination
-    http_method_names = ["get", "patch", "delete"]  # Remove 'post' to disable creation
+    http_method_names = ["get", "patch", "delete"]
 
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
         """
         if self.action == "destroy":
-            # For delete: Allow comment author, post owner, or admin
             permission_classes = [IsAuthenticated, IsCommentOwnerPostOwnerOrAdmin]
         elif self.action in ["update", "partial_update"]:
-            # For edit: Only comment owner
             permission_classes = [IsAuthenticated, IsCommentOwnerOrReadOnly]
         else:
             permission_classes = [IsAuthenticated]
@@ -294,7 +290,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         """Return appropriate serializer based on action"""
         if self.action in ["update", "partial_update"]:
-            return CommentUpdateSerializer
+            return CommentTextSerializer
         elif self.action == "list":
             return CommentWithPostSerializer
         return CommentSerializer
@@ -320,7 +316,7 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Response(serializer.data)
 
         elif request.method == "POST":
-            serializer = CommentReplyCreateSerializer(
+            serializer = CommentTextSerializer(
                 data=request.data, context={"request": request}
             )
             if serializer.is_valid():

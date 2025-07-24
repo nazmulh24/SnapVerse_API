@@ -9,12 +9,8 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed for any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
         if request.method in permissions.SAFE_METHODS:
             return True
-
-        # Write permissions are only allowed to the owner of the post.
         return obj.user == request.user
 
 
@@ -25,7 +21,6 @@ class IsOwnerOnly(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        # All permissions are only allowed to the owner of the object.
         return obj.user == request.user
 
 
@@ -41,17 +36,14 @@ class IsPostOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         user = request.user
 
-        # Write permissions are only allowed to the owner
         if request.method not in permissions.SAFE_METHODS:
             return obj.user == user
 
-        # Read permissions based on privacy settings
         if obj.privacy == "public":
             return True
         elif obj.privacy == "private":
             return obj.user == user
         elif obj.privacy == "followers":
-            # Check if user follows the post owner
             if obj.user == user:
                 return True
             return user.following.filter(following=obj.user, is_approved=True).exists()
@@ -67,13 +59,9 @@ class IsCommentOwnerOrReadOnly(permissions.BasePermission):
     """
 
     def has_object_permission(self, request, view, obj):
-        # Write permissions are only allowed to the owner of the comment
         if request.method not in permissions.SAFE_METHODS:
             return obj.user == request.user
-
-        # Read permissions: can view if user can see the post
-        # This logic would need to be implemented based on post permissions
-        return True  # For now, allow reading all comments
+        return True
 
 
 class IsCommentOwnerPostOwnerOrAdmin(permissions.BasePermission):
@@ -87,18 +75,15 @@ class IsCommentOwnerPostOwnerOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         user = request.user
 
-        # Read permissions for everyone
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        # For DELETE: Allow comment author, post owner, or admin
         if request.method == "DELETE":
             return (
-                obj.user == user  # Comment author
-                or obj.post.user == user  # Post owner
-                or user.is_staff  # Admin
-                or user.is_superuser  # Superuser
+                obj.user == user
+                or obj.post.user == user
+                or user.is_staff
+                or user.is_superuser
             )
 
-        # For other write operations (PUT, PATCH): Only comment author
         return obj.user == user
