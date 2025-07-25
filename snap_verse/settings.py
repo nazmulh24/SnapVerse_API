@@ -82,7 +82,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "snap_verse.wsgi.application"
+WSGI_APPLICATION = "snap_verse.wsgi.app"
 
 
 # Database
