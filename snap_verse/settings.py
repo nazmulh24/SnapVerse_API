@@ -1,6 +1,7 @@
 from datetime import timedelta
 from pathlib import Path
 from decouple import config
+import cloudinary
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -123,6 +124,19 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
+
+
+# ---> Configuring Cloudinary for media storage
+cloudinary.config(
+    cloud_name=config("cloud_name"),
+    api_key=config("api_key"),
+    api_secret=config("api_secret"),
+    secure=True,
+)
+
+# --> Media storage settings
+DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
 
 LANGUAGE_CODE = "en-us"
 

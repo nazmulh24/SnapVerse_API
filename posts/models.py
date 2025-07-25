@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
 
+from cloudinary.models import CloudinaryField
+
 from api.validators import validate_file_size, validate_image_format
 
 
@@ -15,11 +17,12 @@ class Post(models.Model):
         related_name="posts",
     )
     caption = models.TextField(max_length=2200, blank=True, null=True)
-    image = models.ImageField(
-        upload_to="posts/images/",
+    image = CloudinaryField(
+        "image",
         blank=True,
         null=True,
         validators=[validate_file_size, validate_image_format],
+        folder="snapverse/posts/images",
     )
     # video = models.FileField(upload_to="posts/videos/", blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)

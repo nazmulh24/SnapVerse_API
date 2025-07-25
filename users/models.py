@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from cloudinary.models import CloudinaryField
+
 from users.managers import CustomUserManager
 from api.validators import validate_file_size, validate_image_format
 
@@ -21,17 +23,19 @@ class User(AbstractUser):
     )
 
     email = models.EmailField(unique=True)
-    profile_picture = models.ImageField(
-        upload_to="users/profile_pictures/",
+    profile_picture = CloudinaryField(
+        "image",
         blank=True,
         null=True,
         validators=[validate_file_size, validate_image_format],
+        folder="snapverse/users/profile_pictures",
     )
-    cover_photo = models.ImageField(
-        upload_to="users/cover_photos/",
+    cover_photo = CloudinaryField(
+        "image",
         blank=True,
         null=True,
         validators=[validate_file_size, validate_image_format],
+        folder="snapverse/users/cover_photos",
     )
     bio = models.TextField(max_length=200, blank=True, null=True)
     location = models.CharField(max_length=100, blank=True, null=True)
@@ -82,3 +86,4 @@ class User(AbstractUser):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
+
