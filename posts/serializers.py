@@ -9,6 +9,8 @@ User = get_user_model()
 class PostCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating posts"""
 
+    image = serializers.ImageField()
+
     class Meta:
         model = Post
         fields = [
@@ -230,5 +232,3 @@ class ReactionCreateSerializer(serializers.Serializer):
                 f"Invalid reaction. Choose from: {valid_choices}"
             )
         return value
-
-
