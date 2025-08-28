@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     #
     "drf_yasg",
     "django_filters",
+    "corsheaders",  # --> For handling CORS (Cross-Origin Resource Sharing)
     "rest_framework",
     "djoser",
     "debug_toolbar",
@@ -51,6 +52,8 @@ INTERNAL_IPS = [
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",  # --> For handling CORS (Cross-Origin Resource Sharing)
+    #
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     #
     "django.middleware.security.SecurityMiddleware",
@@ -83,6 +86,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "snap_verse.wsgi.app"
+
+# --> CORS Configuration
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173"]
 
 
 # Database
