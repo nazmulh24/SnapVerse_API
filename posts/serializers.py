@@ -29,7 +29,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
 class PostDetailSerializer(serializers.ModelSerializer):
     """Serializer for detailed post view"""
 
-    user = serializers.CharField(source="user.username", read_only=True)
+    user = serializers.CharField(source="user.get_full_name", read_only=True)
     user_profile_picture = serializers.ImageField(
         source="user.profile_picture", read_only=True
     )
@@ -75,7 +75,7 @@ class PostUpdateSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     """Serializer for displaying comments"""
 
-    user = serializers.CharField(source="user.username", read_only=True)
+    user = serializers.CharField(source="user.get_full_name", read_only=True)
     user_profile_picture = serializers.ImageField(
         source="user.profile_picture", read_only=True
     )
@@ -180,7 +180,7 @@ class CommentTextSerializer(serializers.ModelSerializer):
 class CommentReplySerializer(serializers.ModelSerializer):
     """Serializer for comment replies (nested comments)"""
 
-    user = serializers.CharField(source="user.username", read_only=True)
+    user = serializers.CharField(source="user.get_full_name", read_only=True)
     user_profile_picture = serializers.ImageField(
         source="user.profile_picture", read_only=True
     )
@@ -201,7 +201,7 @@ class CommentReplySerializer(serializers.ModelSerializer):
 class ReactionSerializer(serializers.ModelSerializer):
     """Serializer for post reactions"""
 
-    user = serializers.CharField(source="user.username", read_only=True)
+    user = serializers.CharField(source="user.get_full_name", read_only=True)
     user_profile_picture = serializers.ImageField(
         source="user.profile_picture", read_only=True
     )
