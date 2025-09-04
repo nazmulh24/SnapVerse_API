@@ -30,6 +30,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
     """Serializer for detailed post view"""
 
     user = serializers.CharField(source="user.get_full_name", read_only=True)
+    username = serializers.CharField(source="user.username", read_only=True)
     user_profile_picture = serializers.ImageField(
         source="user.profile_picture", read_only=True
     )
@@ -41,6 +42,7 @@ class PostDetailSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
+            "username",
             "user_profile_picture",
             "caption",
             "image",

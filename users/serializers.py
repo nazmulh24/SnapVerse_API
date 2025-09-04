@@ -127,11 +127,18 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "full_name",
+            "email",
             "profile_picture",
             "cover_photo",
             "bio",
             "location",
+            "phone_number",
+            "date_of_birth",
+            "gender",
+            "relationship_status",
             "is_private",
+            "date_joined",
+            "last_login",
             "followers_count",
             "following_count",
             "posts_count",
@@ -147,16 +154,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_following_count(self, obj):
         return obj.following.filter(is_approved=True).count()
-
+    
     def get_posts_count(self, obj):
-        request_user = (
-            self.context.get("request").user if self.context.get("request") else None
-        )
-        if not obj.is_private or (
-            request_user and self._is_following(obj, request_user)
-        ):
-            return obj.posts.count()
-        return 0
+        return obj.posts.count()
 
     def get_is_following(self, obj):
         request_user = (
@@ -186,4 +186,3 @@ class UserProfileSerializer(serializers.ModelSerializer):
             return follow.is_approved
         except:
             return False
-
