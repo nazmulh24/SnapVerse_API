@@ -30,6 +30,7 @@ from .serializers import (
 
 from sslcommerz_lib import SSLCOMMERZ
 
+
 class PostViewSet(viewsets.ModelViewSet):
     """Post management endpoints for social media content."""
 
@@ -392,7 +393,11 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 @api_view(["POST"])
 def initiate_payment(request):
-    ammount = request.data.get("amount")
+    user = request.user
+    amount = request.data.get("amount")
+    order_id = request.data.get("orderId")
+    number_of_items = request.data.get("numItems", 1)
+
     settings = {
         "store_id": "nazmu689918a6d45d1",
         "store_pass": "nazmu689918a6d45d1@ssl",
@@ -400,24 +405,24 @@ def initiate_payment(request):
     }
     sslcz = SSLCOMMERZ(settings)
     post_body = {}
-    post_body["total_amount"] = ammount
+    post_body["total_amount"] = amount
     post_body["currency"] = "BDT"
-    post_body["tran_id"] = "12345"
-    post_body["success_url"] = "your success url"
-    post_body["fail_url"] = "your fail url"
-    post_body["cancel_url"] = "your cancel url"
+    post_body["tran_id"] = f"txn_{order_id}"
+    post_body["success_url"] = "http://localhost:5173/dashboard/payment/success"
+    post_body["fail_url"] = "http://localhost:5173/dashboard/payment/fail"
+    post_body["cancel_url"] = "http://localhost:5173/dashboard/orders"
     post_body["emi_option"] = 0
-    post_body["cus_name"] = "test"
-    post_body["cus_email"] = "test@test.com"
-    post_body["cus_phone"] = "01700000000"
-    post_body["cus_add1"] = "customer address"
+    post_body["cus_name"] = f"{user.first_name} {user.last_name}"
+    post_body["cus_email"] = user.email
+    post_body["cus_phone"] = user.phone_number or "N/A"
+    post_body["cus_add1"] = user.address or "N/A"
     post_body["cus_city"] = "Dhaka"
     post_body["cus_country"] = "Bangladesh"
-    post_body["shipping_method"] = "NO"
+    post_body["shipping_method"] = "Courier"
     post_body["multi_card_name"] = ""
-    post_body["num_of_item"] = 1
-    post_body["product_name"] = "Test"
-    post_body["product_category"] = "Test Category"
+    post_body["num_of_item"] = number_of_items
+    post_body["product_name"] = "E-commerce Product"
+    post_body["product_category"] = "General"
     post_body["product_profile"] = "general"
     response = sslcz.createSession(post_body)  # API response
     print(response)
