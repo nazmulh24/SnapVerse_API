@@ -118,6 +118,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     posts_count = serializers.SerializerMethodField()
     is_following = serializers.SerializerMethodField()
     follow_status = serializers.SerializerMethodField()
+    posts = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -142,6 +143,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "followers_count",
             "following_count",
             "posts_count",
+            "posts",
             "is_following",
             "follow_status",
         )

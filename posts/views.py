@@ -1,5 +1,5 @@
 from rest_framework import viewsets, status
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -28,6 +28,7 @@ from .serializers import (
     ReactionCreateSerializer,
 )
 
+from sslcommerz_lib import SSLCOMMERZ
 
 class PostViewSet(viewsets.ModelViewSet):
     """Post management endpoints for social media content."""
@@ -387,3 +388,39 @@ class CommentViewSet(viewsets.ModelViewSet):
                     response_serializer.data, status=status.HTTP_201_CREATED
                 )
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def initiate_payment(request):
+    ammount = request.data.get("amount")
+    settings = {
+        "store_id": "nazmu689918a6d45d1",
+        "store_pass": "nazmu689918a6d45d1@ssl",
+        "issandbox": True,
+    }
+    sslcz = SSLCOMMERZ(settings)
+    post_body = {}
+    post_body["total_amount"] = ammount
+    post_body["currency"] = "BDT"
+    post_body["tran_id"] = "12345"
+    post_body["success_url"] = "your success url"
+    post_body["fail_url"] = "your fail url"
+    post_body["cancel_url"] = "your cancel url"
+    post_body["emi_option"] = 0
+    post_body["cus_name"] = "test"
+    post_body["cus_email"] = "test@test.com"
+    post_body["cus_phone"] = "01700000000"
+    post_body["cus_add1"] = "customer address"
+    post_body["cus_city"] = "Dhaka"
+    post_body["cus_country"] = "Bangladesh"
+    post_body["shipping_method"] = "NO"
+    post_body["multi_card_name"] = ""
+    post_body["num_of_item"] = 1
+    post_body["product_name"] = "Test"
+    post_body["product_category"] = "Test Category"
+    post_body["product_profile"] = "general"
+    response = sslcz.createSession(post_body)  # API response
+    print(response)
+    if response.get("status") == "SUCCESS":
+        return Response({"payment_url": response["GatewayPageURL"]}, status=200)
+    return Response({"error": "Payment initiation failed"}, status=400)

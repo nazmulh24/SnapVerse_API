@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework_nested import routers
 
 from users.views import UserViewSet
-from posts.views import PostViewSet, CommentViewSet
+from posts.views import PostViewSet, CommentViewSet, initiate_payment
 from relationships.views import FollowViewSet
 
 
@@ -23,4 +23,6 @@ urlpatterns = [
     #
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.jwt")),
+    #
+    path("payment/initiate", initiate_payment, name="initiate-payment"),
 ]
