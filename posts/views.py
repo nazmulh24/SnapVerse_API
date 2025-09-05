@@ -564,7 +564,7 @@ def payment_success(request):
     except (User.DoesNotExist, ValueError, IndexError) as e:
         print(f"Error processing payment success: {e}")
 
-    return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/monetization/")
+    return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/payment/success/")
 
 
 @api_view(["POST"])
