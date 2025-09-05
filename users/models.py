@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
+from datetime import timedelta
 
 from cloudinary.models import CloudinaryField
 
@@ -21,6 +23,11 @@ class User(AbstractUser):
             "unique": "A user with that username already exists.",
         },
     )
+
+    # --> Pro subscription fields for monetization
+    is_pro = models.BooleanField(default=False)
+    pro_subscription_start = models.DateTimeField(null=True, blank=True)
+    pro_subscription_end = models.DateTimeField(null=True, blank=True)
 
     email = models.EmailField(unique=True)
     profile_picture = CloudinaryField(
@@ -87,3 +94,39 @@ class User(AbstractUser):
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}".strip()
 
+    @property
+    def is_pro_active(self):
+        """Check if pro subscription is currently active"""
+        if not self.is_pro:
+            return False
+
+        if self.pro_subscription_end and timezone.now() > self.pro_subscription_end:
+            # Auto-expire subscription
+            self.is_pro = False
+            self.save(update_fields=["is_pro"])
+            return False
+
+        return True
+
+    @property
+    def pro_days_remaining(self):
+        """Get remaining days in pro subscription"""
+        if not self.is_pro_active or not self.pro_subscription_end:
+            return 0
+
+        remaining = self.pro_subscription_end - timezone.now()
+        return max(0, remaining.days)
+
+    def activate_pro_subscription(self, duration_days=30):
+        """Activate pro subscription for specified duration"""
+        self.is_pro = True
+        self.pro_subscription_start = timezone.now()
+        self.pro_subscription_end = timezone.now() + timedelta(days=duration_days)
+        self.save(
+            update_fields=["is_pro", "pro_subscription_start", "pro_subscription_end"]
+        )
+
+    def deactivate_pro_subscription(self):
+        """Deactivate pro subscription"""
+        self.is_pro = False
+        self.save(update_fields=["is_pro"])

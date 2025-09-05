@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
@@ -29,6 +30,12 @@ from .serializers import (
 )
 
 from sslcommerz_lib import SSLCOMMERZ
+from django.conf import settings as main_settings
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -391,41 +398,192 @@ class CommentViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+# @api_view(["POST"])
+# def initiate_payment(request):
+#     user = request.user
+#     amount = request.data.get("amount")
+#     order_id = request.data.get("orderId")
+#     number_of_items = request.data.get("numItems", 1)
+
+#     settings = {
+#         "store_id": "nazmu689918a6d45d1",
+#         "store_pass": "nazmu689918a6d45d1@ssl",
+#         "issandbox": True,
+#     }
+#     sslcz = SSLCOMMERZ(settings)
+#     post_body = {}
+#     post_body["total_amount"] = amount
+#     post_body["currency"] = "BDT"
+#     post_body["tran_id"] = f"txn_{order_id}"
+#     post_body["success_url"] = f"{main_settings.BACKEND_URL}/api/v1/payment/success/"
+#     post_body["fail_url"] = f"{main_settings.BACKEND_URL}/api/v1/payment/fail/"
+#     post_body["cancel_url"] = f"{main_settings.BACKEND_URL}/api/v1/payment/cancel/"
+#     post_body["emi_option"] = 0
+#     post_body["cus_name"] = f"{user.first_name} {user.last_name}"
+#     post_body["cus_email"] = user.email
+#     post_body["cus_phone"] = user.phone_number or "N/A"
+#     post_body["cus_add1"] = user.address or "N/A"
+#     post_body["cus_city"] = "Dhaka"
+#     post_body["cus_country"] = "Bangladesh"
+#     post_body["shipping_method"] = "No"
+#     post_body["multi_card_name"] = ""
+#     post_body["num_of_item"] = number_of_items
+#     post_body["product_name"] = "E-commerce Product"
+#     post_body["product_category"] = "General"
+#     post_body["product_profile"] = "general"
+#     response = sslcz.createSession(post_body)  # API response
+#     print(response)
+#     if response.get("status") == "SUCCESS":
+#         return Response({"payment_url": response["GatewayPageURL"]}, status=200)
+#     return Response({"error": "Payment initiation failed"}, status=400)
+
+
 @api_view(["POST"])
 def initiate_payment(request):
+    """Initiate payment for pro subscription (99 BDT for 1 month)"""
     user = request.user
-    amount = request.data.get("amount")
-    order_id = request.data.get("orderId")
-    number_of_items = request.data.get("numItems", 1)
+
+    amount = 99
+    subscription_type = "pro_monthly"
+
+    from datetime import datetime
+
+    tran_id = f"pro_{user.id}_{int(datetime.now().timestamp())}"
 
     settings = {
         "store_id": "nazmu689918a6d45d1",
         "store_pass": "nazmu689918a6d45d1@ssl",
         "issandbox": True,
     }
+
     sslcz = SSLCOMMERZ(settings)
     post_body = {}
     post_body["total_amount"] = amount
     post_body["currency"] = "BDT"
-    post_body["tran_id"] = f"txn_{order_id}"
-    post_body["success_url"] = "http://localhost:5173/dashboard/payment/success"
-    post_body["fail_url"] = "http://localhost:5173/dashboard/payment/fail"
-    post_body["cancel_url"] = "http://localhost:5173/dashboard/orders"
+    post_body["tran_id"] = tran_id
+    post_body["success_url"] = (
+        f"{main_settings.BACKEND_URL}/api/v1/posts/payment/success/"
+    )
+    post_body["fail_url"] = f"{main_settings.BACKEND_URL}/api/v1/posts/payment/fail/"
+    post_body["cancel_url"] = (
+        f"{main_settings.BACKEND_URL}/api/v1/posts/payment/cancel/"
+    )
     post_body["emi_option"] = 0
-    post_body["cus_name"] = f"{user.first_name} {user.last_name}"
+    post_body["cus_name"] = (
+        f"{user.first_name} {user.last_name}" if user.first_name else user.username
+    )
     post_body["cus_email"] = user.email
-    post_body["cus_phone"] = user.phone_number or "N/A"
-    post_body["cus_add1"] = user.address or "N/A"
+    post_body["cus_phone"] = getattr(user, "phone_number", None) or "N/A"
+    post_body["cus_add1"] = getattr(user, "address", None) or "N/A"
     post_body["cus_city"] = "Dhaka"
     post_body["cus_country"] = "Bangladesh"
     post_body["shipping_method"] = "No"
     post_body["multi_card_name"] = ""
-    post_body["num_of_item"] = number_of_items
-    post_body["product_name"] = "E-commerce Product"
-    post_body["product_category"] = "General"
+    post_body["num_of_item"] = 1
+    post_body["product_name"] = "SnapVerse Pro Subscription - 1 Month"
+    post_body["product_category"] = "Subscription"
     post_body["product_profile"] = "general"
-    response = sslcz.createSession(post_body)  # API response
-    print(response)
+
+    response = sslcz.createSession(post_body)
+    print(f"Payment response: {response}")
+
     if response.get("status") == "SUCCESS":
-        return Response({"payment_url": response["GatewayPageURL"]}, status=200)
-    return Response({"error": "Payment initiation failed"}, status=400)
+        return Response(
+            {
+                "payment_url": response["GatewayPageURL"],
+                "transaction_id": tran_id,
+                "amount": amount,
+                "subscription_type": subscription_type,
+            },
+            status=200,
+        )
+
+    return Response(
+        {"error": "Payment initiation failed", "details": response}, status=400
+    )
+
+
+@api_view(["POST"])
+def payment_success(request):
+    """Handle successful payment and activate pro subscription"""
+    print("Payment success - activating pro subscription")
+
+    try:
+        # Get transaction ID from the response
+        tran_id = request.data.get("tran_id")
+        if not tran_id:
+            print("No transaction ID found")
+            return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/monetization")
+
+        # Extract user ID from transaction ID
+        user_id = tran_id.split("_")[1]
+        user = User.objects.get(id=user_id)
+
+        # Update user's pro status
+        user.is_pro = True
+        user.pro_subscription_start = timezone.now()
+        user.pro_subscription_end = timezone.now() + timedelta(days=30)  # 1 month
+        user.save()
+
+        print(f"Pro subscription activated for user {user.username}")
+        return HttpResponseRedirect(
+            f"{main_settings.FRONTEND_URL}/monetization/"
+        )
+
+    except User.DoesNotExist:
+        print("User not found")
+        return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/monetization")
+    except Exception as e:
+        print(f"Error processing payment success: {e}")
+        return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/monetization")
+
+
+@api_view(["POST"])
+def payment_cancel(request):
+    """Handle cancelled payment"""
+    print("Payment cancelled by user")
+    return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/monetization")
+
+
+@api_view(["POST"])
+def payment_fail(request):
+    """Handle failed payment"""
+    print("Payment failed")
+    return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/monetization")
+
+
+@api_view(["GET"])
+def check_pro_status(request):
+    """Check if user has active pro subscription"""
+    user = request.user
+
+    if not hasattr(user, "is_pro"):
+        return Response({"is_pro": False, "message": "Pro subscription not available"})
+
+    # Check if subscription is still valid
+    if user.is_pro and user.pro_subscription_end:
+        if timezone.now() > user.pro_subscription_end:
+            # Subscription expired
+            user.is_pro = False
+            user.save()
+
+    return Response(
+        {
+            "is_pro": user.is_pro,
+            "subscription_start": (
+                user.pro_subscription_start
+                if hasattr(user, "pro_subscription_start")
+                else None
+            ),
+            "subscription_end": (
+                user.pro_subscription_end
+                if hasattr(user, "pro_subscription_end")
+                else None
+            ),
+            "days_remaining": (
+                (user.pro_subscription_end - timezone.now()).days
+                if user.is_pro and hasattr(user, "pro_subscription_end")
+                else 0
+            ),
+        }
+    )
