@@ -90,7 +90,7 @@ WSGI_APPLICATION = "snap_verse.wsgi.app"
 # --> CORS Configuration
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://snap-verse-coral.vercel.app/",
+    "https://snap-verse-coral.vercel.app",
 ]
 
 
