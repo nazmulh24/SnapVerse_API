@@ -466,52 +466,104 @@ def initiate_payment(request):
 
 @api_view(["POST"])
 def initiate_payment(request):
+    """Initiate payment for SnapVerse Pro subscription - 99 BDT for 30 days"""
     user = request.user
+
+    # Fixed amount for pro subscription
     amount = 99
+    subscription_type = "pro_monthly"
+
+    from datetime import datetime
+
+    # Create unique transaction ID for pro subscription
+    tran_id = f"pro_{user.id}_{int(datetime.now().timestamp())}"
 
     settings = {
         "store_id": "nazmu689918a6d45d1",
         "store_pass": "nazmu689918a6d45d1@ssl",
         "issandbox": True,
     }
+
     sslcz = SSLCOMMERZ(settings)
     post_body = {}
     post_body["total_amount"] = amount
     post_body["currency"] = "BDT"
-    post_body["tran_id"] = f"txn_{user.username}_{int(timezone.now().timestamp())}"
+    post_body["tran_id"] = tran_id
     post_body["success_url"] = f"{main_settings.BACKEND_URL}/api/v1/payment/success/"
     post_body["fail_url"] = f"{main_settings.BACKEND_URL}/api/v1/payment/fail/"
     post_body["cancel_url"] = f"{main_settings.BACKEND_URL}/api/v1/payment/cancel/"
+
+    # Fix EMI settings to prevent 500 error
     post_body["emi_option"] = 0
-    post_body["cus_name"] = f"{user.first_name} {user.last_name}"
+
+    # Safely handle user fields that might be None
+    post_body["cus_name"] = (
+        f"{user.first_name} {user.last_name}".strip()
+        if user.first_name or user.last_name
+        else user.username
+    )
     post_body["cus_email"] = user.email
-    post_body["cus_phone"] = user.phone_number
-    post_body["cus_add1"] = user.address
+    post_body["cus_phone"] = getattr(user, "phone_number", None) or "01700000000"
+    post_body["cus_add1"] = getattr(user, "location", None) or "Dhaka, Bangladesh"
     post_body["cus_city"] = "Dhaka"
     post_body["cus_country"] = "Bangladesh"
-    post_body["shipping_method"] = "Courier"
+    post_body["shipping_method"] = "NO"
     post_body["multi_card_name"] = ""
     post_body["num_of_item"] = 1
     post_body["product_name"] = "SnapVerse Pro Subscription - 30 Days"
     post_body["product_category"] = "Subscription"
     post_body["product_profile"] = "general"
 
-    response = sslcz.createSession(post_body)  # API response
+    try:
+        response = sslcz.createSession(post_body)
+        print(f"Payment response: {response}")
 
-    if response.get("status") == "SUCCESS":
-        return Response({"payment_url": response["GatewayPageURL"]})
-    return Response(
-        {"error": "Payment initiation failed"}, status=status.HTTP_400_BAD_REQUEST
-    )
+        if response.get("status") == "SUCCESS":
+            return Response(
+                {
+                    "payment_url": response["GatewayPageURL"],
+                    "transaction_id": tran_id,
+                    "amount": amount,
+                    "subscription_type": subscription_type,
+                },
+                status=200,
+            )
+
+        return Response(
+            {"error": "Payment initiation failed", "details": response}, status=400
+        )
+    except Exception as e:
+        print(f"Payment initiation error: {e}")
+        return Response(
+            {"error": "Payment service error", "message": str(e)},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 @api_view(["POST"])
 def payment_success(request):
     print("Inside success")
-    user_id = request.data.get("tran_id").split("_")[1]
-    user = User.objects.get(id=user_id)
-    user.is_premium = True
-    user.save()
+    try:
+        tran_id = request.data.get("tran_id")
+        if not tran_id:
+            print("No transaction ID found")
+            return HttpResponseRedirect(
+                f"{main_settings.FRONTEND_URL}/monetization/?error=no_tran_id"
+            )
+
+        # Extract user ID from transaction ID (format: pro_{user_id}_{timestamp})
+        parts = tran_id.split("_")
+        if len(parts) >= 2:
+            user_id = parts[1]
+            user = User.objects.get(id=user_id)
+            user.activate_pro_subscription(duration_days=30)
+            print(f"User {user_id} upgraded to pro")
+        else:
+            print(f"Invalid transaction ID format: {tran_id}")
+
+    except (User.DoesNotExist, ValueError, IndexError) as e:
+        print(f"Error processing payment success: {e}")
+
     return HttpResponseRedirect(f"{main_settings.FRONTEND_URL}/monetization/")
 
 
