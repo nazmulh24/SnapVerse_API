@@ -222,5 +222,5 @@ EMAIL_HOST_USER = config("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 
 
-BACKEND_URL = config("BACKEND_URL", default="http://localhost:8000")
-FRONTEND_URL = config("FRONTEND_URL", default="http://localhost:5173")
+BACKEND_URL = config("BACKEND_URL")
+FRONTEND_URL = config("FRONTEND_URL")
