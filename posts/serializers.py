@@ -72,7 +72,7 @@ class PostUpdateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ["caption", "location", "privacy", "image", "is_edited"]
+        fields = ["caption", "location", "privacy", "image"]
 
     def update(self, instance, validated_data):
         validated_data["is_edited"] = True
