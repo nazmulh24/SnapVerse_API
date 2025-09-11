@@ -68,9 +68,11 @@ class PostDetailSerializer(serializers.ModelSerializer):
 class PostUpdateSerializer(serializers.ModelSerializer):
     """Serializer for updating posts"""
 
+    # image = serializers.ImageField(required=False)
+
     class Meta:
         model = Post
-        fields = ["caption", "location", "privacy"]
+        fields = ["caption", "location", "privacy", "image"]
         # --> Note: image and video are typically not updated after creation
 
 
