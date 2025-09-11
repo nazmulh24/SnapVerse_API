@@ -75,6 +75,9 @@ class PostUpdateSerializer(serializers.ModelSerializer):
         fields = ["caption", "location", "privacy", "image"]
 
     def update(self, instance, validated_data):
+        if "image" in validated_data and not validated_data["image"]:
+            validated_data.pop("image")
+
         validated_data["is_edited"] = True
         return super().update(instance, validated_data)
 
