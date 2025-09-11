@@ -9,7 +9,7 @@ User = get_user_model()
 class PostCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating posts"""
 
-    image = serializers.ImageField()
+    image = serializers.ImageField(required=False)
 
     class Meta:
         model = Post
