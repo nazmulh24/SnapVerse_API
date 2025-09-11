@@ -74,28 +74,31 @@ class PostUpdateSerializer(serializers.ModelSerializer):
         model = Post
         fields = ["caption", "location", "privacy", "image"]
 
-    # def update(self, instance, validated_data):
-    #     if "image" in validated_data and not validated_data["image"]:
-    #         validated_data.pop("image")
-
-    #     validated_data["is_edited"] = True
-    #     return super().update(instance, validated_data)
-
     def update(self, instance, validated_data):
-        # Handle image removal explicitly
-        if "image" in validated_data:
-            if validated_data["image"] is None:
-                # User wants to remove the image
+        # Handle image operations
+        request_data = self.context["request"].data
+
+        # Check if user wants to clear the image
+        if request_data.get("clear_image") == "true":
+            # User wants to remove the image
+            if instance.image:
                 instance.image.delete(save=False)  # Delete the file from storage
                 instance.image = None
-            elif validated_data["image"]:
+            # Remove the dummy image file from validated_data
+            validated_data.pop("image", None)
+        elif "image" in validated_data and validated_data["image"]:
+            # Check if it's a real image file (not our dummy marker)
+            if (
+                hasattr(validated_data["image"], "size")
+                and validated_data["image"].size > 0
+            ):
                 # User uploaded a new image
                 if instance.image:
                     instance.image.delete(save=False)  # Delete old image
                 instance.image = validated_data["image"]
-            # If image is empty string or False, preserve existing image
-            elif not validated_data["image"]:
-                validated_data.pop("image")
+            else:
+                # It's our dummy file, remove it from validated_data
+                validated_data.pop("image", None)
 
         validated_data["is_edited"] = True
         return super().update(instance, validated_data)
