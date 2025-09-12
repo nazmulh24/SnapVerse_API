@@ -13,8 +13,11 @@ from api.paginations import PostPagination, CommentPagination
 from posts.models import Post, Comment, Reaction
 from api.permissions import (
     IsOwnerOrReadOnly,
+    IsOwnerOrStaff,
+    IsCommentOwnerOrStaff,
     IsCommentOwnerOrReadOnly,
     IsCommentOwnerPostOwnerOrAdmin,
+    IsPostOwnerOrStaffOrReadOnly,
 )
 from .serializers import (
     PostCreateSerializer,
@@ -56,7 +59,8 @@ class PostViewSet(viewsets.ModelViewSet):
         Instantiates and returns the list of permissions that this view requires.
         """
         if self.action in ["update", "partial_update", "destroy"]:
-            permission_classes = [IsAuthenticated, IsOwnerOrReadOnly]
+            # Allow owners and staff to edit/delete posts
+            permission_classes = [IsAuthenticated, IsOwnerOrStaff]
         else:
             permission_classes = [IsAuthenticated]
 
@@ -328,9 +332,11 @@ class CommentViewSet(viewsets.ModelViewSet):
         Instantiates and returns the list of permissions that this view requires.
         """
         if self.action == "destroy":
+            # Allow comment owner, post owner, or staff to delete comments
             permission_classes = [IsAuthenticated, IsCommentOwnerPostOwnerOrAdmin]
         elif self.action in ["update", "partial_update"]:
-            permission_classes = [IsAuthenticated, IsCommentOwnerOrReadOnly]
+            # Allow comment owner or staff to edit comments
+            permission_classes = [IsAuthenticated, IsCommentOwnerOrStaff]
         else:
             permission_classes = [IsAuthenticated]
 
