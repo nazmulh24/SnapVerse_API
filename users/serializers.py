@@ -57,8 +57,9 @@ class UserSerializer(BaseUserSerializer):
             "followers_count",
             "following_count",
             "posts_count",
+            "is_staff",
         )
-        read_only_fields = ("id", "date_joined", "last_login")
+        read_only_fields = ("id", "date_joined", "last_login", "is_staff")
 
     def get_full_name(self, obj):
         return obj.get_full_name()
@@ -146,7 +147,9 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "posts",
             "is_following",
             "follow_status",
+            "is_staff",
         )
+        read_only_fields = ("is_staff",)
 
     def get_full_name(self, obj):
         return obj.get_full_name()
@@ -156,7 +159,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     def get_following_count(self, obj):
         return obj.following.filter(is_approved=True).count()
-    
+
     def get_posts_count(self, obj):
         return obj.posts.count()
 
